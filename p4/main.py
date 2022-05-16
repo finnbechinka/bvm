@@ -5,6 +5,16 @@ import numpy as np
 import math
 
 
+def progress_bar(progress, total, msg="doing stuff:"):
+    percent = 100 * (progress / float(total))
+    bar = "█" * int(percent / 2) + "-" * (50 - int(percent / 2))
+    msg = (msg[:25] + "..") if len(msg) > 75 else msg
+    clear = "                                                            "
+    print(f"\rworking: [{bar}] {percent:.2f}% ({msg}){clear}", end="\r")
+    if progress == total:
+        print("\ndone")
+
+
 def display(img, name="image", wait=False):
     cv2.imshow(name, img)
     if wait:
@@ -149,20 +159,27 @@ def hysteresis(mag, t_low, t_high):
     return result
 
 
+progress_bar(0, 6, "reading img")
 img = cv2.imread("assets/p04_apfelbaum.png", cv2.IMREAD_GRAYSCALE)
 
 # (a)
+progress_bar(1, 6, "calculating gauss kernel")
 gauss_kernel = calc_gaussian(1, 5.5)
+progress_bar(2, 6, "applying gauss kernel")
 blurred_img = gaussian(img, gauss_kernel)
 
+progress_bar(3, 6, "calculating magnitute and direction of edges")
 # (b)
 sobel_mag, sobel_dir = sobel(blurred_img)
 
 # (c)
+progress_bar(4, 6, "applying nms")
 nms_img = non_maxima_suppression(sobel_mag, sobel_dir)
 
 # (d)
+progress_bar(5, 6, "applying hysteresis")
 canny = hysteresis(nms_img, 25, 50)
+progress_bar(6, 6)
 
 EXPORT_IMAGES = True  # sets if images should be saved to file (into assets/export/)
 SHOW_IMAGES = True  # sets if images should be shown in windows

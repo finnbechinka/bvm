@@ -1,6 +1,17 @@
 import cv2
 import numpy as np
 
+
+def progress_bar(progress, total, msg="doing stuff:"):
+    percent = 100 * (progress / float(total))
+    bar = "█" * int(percent / 2) + "-" * (50 - int(percent / 2))
+    msg = (msg[:25] + "..") if len(msg) > 75 else msg
+    clear = "                                                            "
+    print(f"\rworking: [{bar}] {percent:.2f}% ({msg}){clear}", end="\r")
+    if progress == total:
+        print("\ndone")
+
+
 # outputs 2*n+1 x 2*n+1 mean blur filter matrix
 # example n = 1:
 # [[1, 1, 1],
@@ -90,23 +101,29 @@ def weighted_median_filter(input, filter):
     return output
 
 
+progress_bar(0, 5, "reading img")
 img = cv2.imread("assets/p03_nilpferd.jpg", cv2.IMREAD_GRAYSCALE)
 
+progress_bar(1, 5, "applying mean blur")
 # 1. (a)
 # N = 1
 a = linear_filter(img, mean_blur_matrix(1))
 
+progress_bar(2, 5, "applying binomial matix n 1")
 # 1. (b)
 # N = 1
 b = linear_filter(img, binomial_matrix(1))
 
+progress_bar(3, 5, "applying binomial matix n 2")
 # N = 2
 c = linear_filter(img, binomial_matrix(2))
 
+progress_bar(4, 5, "applying weighted median filter")
 # 2.
 # weight matrix
 W = [[1, 2, 1], [2, 3, 2], [1, 2, 1]]
 d = weighted_median_filter(img, W)
+progress_bar(5, 5)
 
 EXPORT_IMAGES = False  # sets if images should be saved to file (in working directory)
 SHOW_IMAGES = True  # sets if images should be shown in windows
