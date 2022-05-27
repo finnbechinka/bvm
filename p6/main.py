@@ -101,9 +101,9 @@ def watershed(img):
     img[markers == -1] = [255, 0, 0]
 
     # color all objects
-    steps = 255 / markers.max()
+    steps = 230 / markers.max()
     for i in range(2, markers.max() + 1):
-        img[markers == i] = [i * steps, i * steps, i * steps]
+        img[markers == i] = [0, 25 + i * steps, 25 + i * steps]
     return img
 
 
