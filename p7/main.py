@@ -1,10 +1,8 @@
-from cgitb import reset
-from colorsys import yiq_to_rgb
 import cv2
 import numpy as np
 
 
-def harrisCornerDetector(img, alpha, t, dmin):
+def harris_corner_detector(img, alpha, t, dmin):
     result = np.copy(img)
     # filter image with gauss before harris corner detector
     img = cv2.GaussianBlur(img, (3, 3), 0)
@@ -136,8 +134,8 @@ temp_match = template_matching(reference, template)
 # 2.
 img = cv2.imread("assets/p07_harris.png")
 
-# harrisCornerDetector with alpha=0.04 CRF-Threshold=20000 dmin=10
-harris = harrisCornerDetector(img, 0.04, 20000, 10)
+# alpha=0.04 threshold=20000 dmin=10
+harris = harris_corner_detector(img, 0.04, 20000, 10)
 
 EXPORT_IMAGES = False
 SHOW_IMAGES = True
