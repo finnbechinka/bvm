@@ -36,15 +36,15 @@ def hough_circle_transformation(image, radius, hough_thresh):
     for i in range(0, center_candidates[0].size):
 
         alone = True
-        # check if there is already a circle close by (within half a radius)
+        # check if there is already a center close by (within 1/10th radius)
         for theta in range(0, 360):
             # calculate polar coordinate points
-            y = center_candidates[1][i] - (2 * radius) * sin(theta * pi / 180)
-            x = center_candidates[0][i] - (2 * radius) * cos(theta * pi / 180)
+            y = center_candidates[1][i] - int(radius / 10) * sin(theta * pi / 180)
+            x = center_candidates[0][i] - int(radius / 10) * cos(theta * pi / 180)
 
-            # check there is already a circle inbetween the center and the edge
+            # check there is already a different center inbetween the current center and the edge
             if x < rows and y < cols:
-                if np.sum(circles[center_candidates[0][i] : int(x), center_candidates[1][i] : int(y)]) > 0:
+                if np.sum(circles[center_candidates[0][i] : int(x), center_candidates[1][i] : int(y)]) > 128:
                     alone = False
         if alone:
             # increment coin count
@@ -54,7 +54,7 @@ def hough_circle_transformation(image, radius, hough_thresh):
             cv2.circle(circles, (center_candidates[1][i], center_candidates[0][i]), 1, 255, 2)
 
             # draw circle around center
-            cv2.circle(circles, (center_candidates[1][i], center_candidates[0][i]), radius, 255, 2)
+            cv2.circle(circles, (center_candidates[1][i], center_candidates[0][i]), radius, 128, 2)
 
     return count, circles
 
@@ -87,9 +87,9 @@ five_cent_count, five_cent_cricles = hough_circle_transformation(edge_img, RADIU
 color_image = cv2.cvtColor(base_image, cv2.COLOR_GRAY2RGB)
 
 # draw colored circles
-color_image[one_cent_cricles == 255] = [255, 0, 0]
-color_image[two_cent_cricles == 255] = [0, 0, 255]
-color_image[five_cent_cricles == 255] = [0, 255, 0]
+color_image[one_cent_cricles >= 128] = [255, 0, 0]
+color_image[two_cent_cricles >= 128] = [0, 0, 255]
+color_image[five_cent_cricles >= 128] = [0, 255, 0]
 
 # print inividual cent count and total
 print(f"{one_cent_count} x 1 cent")
